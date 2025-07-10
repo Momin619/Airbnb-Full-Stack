@@ -7,8 +7,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { setUser, setIsLoggedIn, isLoggedIn } = useUser();
-  const { user } = useUser();
+  const { user, isLoggedIn, setUser, setIsLoggedIn } = useUser();
   // console.log("user is", user);
   const userType = user?.userType || "";
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -19,7 +18,7 @@ const Navbar = () => {
       await api.post("/logout");
       setUser(null);
       setIsLoggedIn(false);
-      navigate("/login");
+      window.location.href = "/login";
     } catch (error) {
       console.log(`Logout failed : ${error}`);
     }
@@ -41,7 +40,7 @@ const Navbar = () => {
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-6 items-center">
             {isLoggedIn ? (
-              userType === "guest" ? (
+              user.userType === "guest" ? (
                 <>
                   <NavLink to="/home" label="Home" active={isActive("/home")} />
                   <NavLink
@@ -61,7 +60,7 @@ const Navbar = () => {
                     logout
                   </button>
                 </>
-              ) : userType === "host" ? (
+              ) : user.userType === "host" ? (
                 <>
                   <NavLink
                     to="/host/home"

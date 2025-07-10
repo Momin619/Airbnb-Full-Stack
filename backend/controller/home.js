@@ -23,12 +23,10 @@ exports.getBooking = async (req, res, next) => {
 exports.getHostHome = async (req, res, next) => {
   try {
     const homes = await Home.find();
-    res.render(path.join(rootPath, "views", "user-views", "home.ejs"), {
-      pageTitle: "Host home List ",
-      homes: homes,
-      isLoggedIn: req.session.isLoggedIn,
-      user: req.session.user,
-    });
+    console.log(homes);
+    if (homes) {
+      res.status(200).json({ homes });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -59,7 +57,8 @@ exports.getAddHome = (req, res, next) => {
 exports.postAddHome = async (req, res, next) => {
   try {
     const { title, price, description, location } = req.body;
-
+    console.log(req.body);
+    console.log(req.files);
     // Get image path
     const imagePath = req.files?.image?.[0]?.path
       ? "/" + req.files.image[0].path.replace(/\\/g, "/")
@@ -91,10 +90,16 @@ exports.postAddHome = async (req, res, next) => {
 
     await home.save();
 
-    res.render(path.join(rootPath, "views", "user-views", "home-added.ejs"), {
-      pageTitle: "Home Added",
-      isLoggedIn: req.session.isLoggedIn,
-      user: req.session.user,
+    res.status(201).json({
+      message: "Home added successfully",
+      home: {
+        title,
+        price,
+        description,
+        location,
+        image: imagePath,
+        rulesPdf: rulesPath,
+      },
     });
   } catch (error) {
     console.log("Error in postAddHome:", error);
@@ -106,14 +111,11 @@ exports.getEditHome = async (req, res, next) => {
   try {
     const homeId = req.params.id;
     const home = await Home.findById(homeId);
-    res.render(path.join(rootPath, "views", "host-views", "edit-home.ejs"), {
-      pageTitle: "Edit Home",
-      home: home,
-      isLoggedIn: req.session.isLoggedIn,
-      user: req.session.user,
-      // isLoggedIn: req.session.isLoggedIn,
-    });
-  } catch (error) {}
+    res.status(201).json({ home });
+  } catch (error) {
+    console.log("Error in getEditHome:", error);
+    res.status(500).json({ message: "Failed to fetch home" });
+  }
 };
 
 const fs = require("fs");
@@ -121,6 +123,9 @@ const fs = require("fs");
 // const Home = require("../models/home");
 
 exports.postEditHome = async (req, res, next) => {
+  console.log("req.body:", req.body);
+  console.log("req.files:", req.files);
+
   try {
     const homeId = req.params.id;
 
@@ -162,7 +167,7 @@ exports.postEditHome = async (req, res, next) => {
     }
 
     await Home.findByIdAndUpdate(homeId, update);
-    res.redirect("/host/home");
+    res.status(201).json({ message: "Home updated successfully" });
   } catch (err) {
     console.log("Error in postEditHome:", err);
     res.redirect("/host/home");
@@ -198,8 +203,7 @@ exports.postDeleteHome = async (req, res, next) => {
       { favourites: homeId },
       { $pull: { favourites: homeId } }
     );
-
-    res.redirect("/host/home");
+    res.status(201).json({ message: "Home deleted successfully" });
   } catch (err) {
     console.log("Error deleting home:", err);
     res.redirect("/host/home");

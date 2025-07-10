@@ -10,7 +10,12 @@ const path = require("path");
 
 const cors = require("cors");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 const rootPath = require("./utils/path-utils");
 const homeRouter = require("./routes/user-routes/homeRouer");
@@ -73,6 +78,21 @@ app.set("views", "views");
 
 app.use(methodUrlRouter);
 
+// In your Express server (e.g., routes/auth.js or app.js)
+app.get("/check-auth", (req, res) => {
+  if (req.session.isLoggedIn && req.session.user) {
+    return res.json({
+      isLoggedIn: true,
+      user: req.session.user,
+    });
+  } else {
+    return res.json({
+      isLoggedIn: false,
+      user: null,
+    });
+  }
+});
+
 app.use((req, res, next) => {
   const loginSession = req.session.isLoggedIn;
   const userSession = req.session.user;
@@ -82,12 +102,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/host", (req, res, next) => {
-  if (!req.session.isLoggedIn) {
-    return res.redirect("/");
-  }
-  next();
-});
 app.use(authRouter);
 
 app.use("/host", hostHomeRouter);

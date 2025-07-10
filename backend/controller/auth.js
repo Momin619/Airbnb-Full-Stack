@@ -21,16 +21,18 @@ exports.postLogin = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(404).json({ errors: ["user dont exists"] });
+      return res.status(404).json({ errors: ["User doesn't exist"] });
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
-      res.status(404).json({ errors: ["passwords not matched"] });
+      return res.status(401).json({ errors: ["Passwords do not match"] });
     }
 
+    // Set session
     req.session.isLoggedIn = true;
     req.session.user = user;
+
     return res.status(200).json({
       message: "Login successful",
       redirectTo: user.userType === "guest" ? "/home" : "/host/home",
@@ -43,7 +45,7 @@ exports.postLogin = async (req, res, next) => {
       isLoggedIn: true,
     });
   } catch (error) {
-    onsole.error(err);
+    console.error(error);
     return res.status(500).json({ errors: ["Internal server error"] });
   }
 };

@@ -201,7 +201,7 @@ function Signup() {
         <div className="text-center">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-8 py-2 font-semibold rounded-md hover:bg-blue-700 transition shadow-lg"
+            className="bg-blue-600 text-white px-8 py-2 font-semibold rounded-md hover:bg-blue-700 transition shadow-lg cursor-pointer"
           >
             Sign Up
           </button>
