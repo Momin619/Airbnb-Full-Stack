@@ -1,0 +1,118 @@
+const express = require("express");
+
+const app = express();
+
+const mongoose = require("mongoose");
+
+const path = require("path");
+
+// local modulesnp[]
+
+const cors = require("cors");
+
+app.use(cors());
+app.use(express.json());
+const rootPath = require("./utils/path-utils");
+const homeRouter = require("./routes/user-routes/homeRouer");
+
+const hostHomeRouter = require("./routes/host-routes/hostHomeRouter");
+
+const addHomeRouter = require("./routes/host-routes/addHomeRouter");
+
+const { errorRouter } = require("./routes/error-route/errorRouter");
+
+const editHomeRouter = require("./routes/host-routes/editHomeRouter");
+
+const homeDetailsRouter = require("./routes/user-routes/homeDetailsRouter");
+
+const {
+  favouriteHomeRouter,
+} = require("./routes/user-routes/favouriteHomeRouter");
+
+const deleteHomeRouter = require("./routes/host-routes/deleteHomeRouter");
+
+const { authRouter } = require("./routes/auth-route/authRouter");
+
+const methodUrlRouter = require("./routes/method-url-route/methodUrlRouter");
+
+const bookingRouter = require("./routes/user-routes/bookingRouter");
+
+// external modules
+
+const port = 3500;
+
+const mongo_url =
+  "mongodb+srv://root:root@full-stack-crud-app.tafe4zh.mongodb.net/airbnb?retryWrites=true&w=majority&appName=Full-Stack-Crud-App";
+
+const session = require("express-session");
+
+const mongodb_session = require("connect-mongodb-session")(session);
+
+const store = new mongodb_session({
+  uri: mongo_url,
+  collection: "sessions",
+});
+
+app.use(express.static("public"));
+app.use("/uploads", express.static(path.join(rootPath, "uploads")));
+app.use("/rules", express.static(path.join(rootPath, "rules")));
+
+app.use(
+  session({
+    secret: "this is my website",
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
+app.use(express.urlencoded({ extended: false }));
+
+app.set("view engine", "ejs");
+
+app.set("views", "views");
+
+app.use(methodUrlRouter);
+
+app.use((req, res, next) => {
+  const loginSession = req.session.isLoggedIn;
+  const userSession = req.session.user;
+  // ✅ Correct logging
+  console.log("User session:", userSession);
+  console.log("Login session:", loginSession);
+  next();
+});
+
+app.use("/host", (req, res, next) => {
+  if (!req.session.isLoggedIn) {
+    return res.redirect("/");
+  }
+  next();
+});
+app.use(authRouter);
+
+app.use("/host", hostHomeRouter);
+
+app.use("/host", addHomeRouter);
+
+app.use("/host", editHomeRouter);
+
+app.use(favouriteHomeRouter);
+
+app.use("/host", deleteHomeRouter);
+
+app.use(bookingRouter);
+
+app.use(homeRouter);
+
+app.use(homeDetailsRouter);
+
+app.use(errorRouter);
+
+mongoose
+  .connect(mongo_url)
+  .then(() => {
+    app.listen(port, () =>
+      console.log("Server is running on http://localhost:3500")
+    );
+  })
+  .catch((err) => console.log(err));

@@ -1,0 +1,31 @@
+{
+  "name": "sql-practice",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run tailwind\"",
+    "server": "nodemon ./server.js",
+    "tailwind": "npx tailwindcss -i ./public/input.css -o ./public/output.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.10",
+    "bcryptjs": "^3.0.2",
+    "concurrently": "^9.1.2",
+    "connect-mongodb-session": "^5.0.0",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.1",
+    "multer": "^2.0.1",
+    "mysql2": "^3.14.1",
+    "nodemon": "^3.1.10",
+    "tailwindcss": "^4.1.10"
+  }
+}

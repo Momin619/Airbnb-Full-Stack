@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <%- include('../partials/navbar.ejs') %>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 class="text-3xl font-bold text-center mb-8 text-blue-600 my-16">
+        Available Homes
+      </h1>
+
+      <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <% if (homes.length === 0) { %>
+        <div class="col-span-full text-center text-gray-500 my-0">
+          No homes found.
+        </div>
+        <% } else { %> <% homes.forEach(home => { %>
+        <div
+          class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition"
+        >
+          <img
+            src="<%= home.image %>"
+            alt="<%= home.title %>"
+            class="w-full h-48 object-cover"
+            loading="lazy"
+          />
+          <div class="p-4">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">
+              <%= home.title %>
+            </h2>
+            <p class="text-blue-600 font-bold mb-2">$<%= home.price %></p>
+            <p class="text-gray-600 mb-2"><%= home.location %></p>
+            <p class="text-gray-700 text-sm"><%= home.description %></p>
+
+            <% if (user.userType === 'guest') { %> <%-
+            include('../partials/favourite.ejs', { home }) %> <%-
+            include('../partials/home-details.ejs', { home }) %> <% } else if
+            (user.userType === 'host') { %>
+            <div class="flex space-x-2 mt-4">
+              <%- include('../partials/edit-home.ejs', { home }) %> <%-
+              include('../partials/delete-home.ejs', { home }) %>
+            </div>
+            <% } %>
+          </div>
+        </div>
+        <% }) %> <% } %>
+      </div>
+    </div>
+  </body>
+</html>

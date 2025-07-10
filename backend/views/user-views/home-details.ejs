@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head') %>
+  <body>
+    <%- include('../partials/navbar', { isLoggedIn: true }) %>
+
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+      <!-- Home Image -->
+      <img
+        src="<%= home.image %>"
+        alt="<%= home.title %>"
+        class="w-full h-96 object-cover rounded-md mb-4"
+      />
+
+      <!-- Home Title -->
+      <h1 class="text-3xl font-bold text-blue-600 mb-2"><%= home.title %></h1>
+
+      <!-- Description -->
+      <p class="text-gray-700 mb-4 text-lg"><%= home.description %></p>
+
+      <!-- Price and Location -->
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-blue-500 font-semibold text-lg">
+          💰 Price: $<%= home.price %>
+        </p>
+        <p class="text-gray-600 text-md">📍 Location: <%= home.location %></p>
+      </div>
+
+      <!-- Download Rules Button -->
+      <% if (home.rulesPdf) { %>
+      <div class="mt-4">
+        <a
+          href="<%= home.rulesPdf %>"
+          download
+          target="_blank"
+          class="inline-block bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition"
+        >
+          📄 Download Home Rules
+        </a>
+      </div>
+      <% } %>
+    </div>
+  </body>
+</html>
