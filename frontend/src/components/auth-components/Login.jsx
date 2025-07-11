@@ -1,14 +1,15 @@
-import React from "react";
-import { useState } from "react";
-import api from "../../api/api";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
 import ValidationErrors from "../validation-component/ValidationErrors";
 import { useUser } from "../../store/UserStore";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const { setUser, setIsLoggedIn } = useUser();
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
-  // const [userType, setUserType] = useState([null]);
   const [formdata, setFormData] = useState({
     email: "",
     password: "",
@@ -29,13 +30,11 @@ function Login() {
     try {
       const response = await api.post("/login", formdata);
       const { redirectTo } = response.data;
-      console.log(response.data);
       setUser(response.data.user);
       setIsLoggedIn(response.data.isLoggedIn);
-      navigate(redirectTo); // go to /home or /host/home
+      navigate(redirectTo);
     } catch (error) {
-      console.log(error);
-      if (error.response && error.response.data.errors) {
+      if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       } else {
         setErrors(["Unexpected error occurred."]);
@@ -44,23 +43,20 @@ function Login() {
   };
 
   return (
-    <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6 my-20">
+    <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6 my-20 mx-auto">
       <div className="text-center">
         <img
           src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-          alt="Sign Up Icon"
+          alt="Login Icon"
           className="mx-auto w-20 h-20 mb-4 rounded-full shadow-md"
         />
-        <h2 className="font-extrabold text-blue-700 text-3xl mb-2"></h2>
-        <p className="text-gray-500">Join us and start your journey!</p>
+        <h2 className="font-extrabold text-blue-700 text-3xl mb-2">Login</h2>
+        <p className="text-gray-500">Access your account securely</p>
       </div>
 
-      <form className="space-y-4" onSubmit={handleOnSubmit} autoComplete="on">
+      <form className="space-y-4" onSubmit={handleOnSubmit}>
         <ValidationErrors errors={errors} />
-        {/* First + Last Name */}
-        <div className="flex flex-col sm:flex-row gap-4"></div>
 
-        {/* Email */}
         <div>
           <label
             htmlFor="email"
@@ -69,21 +65,18 @@ function Login() {
             Email
           </label>
           <input
-            autoCapitalize="on"
-            autoCorrect="on"
-            onChange={handleOnChange}
             autoComplete="email"
+            onChange={handleOnChange}
             value={formdata.email}
             type="email"
             id="email"
             name="email"
             required
             placeholder="Enter your email"
-            className="pl-3 w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {/* Password */}
         <div>
           <label
             htmlFor="password"
@@ -91,26 +84,31 @@ function Login() {
           >
             Password
           </label>
-          <input
-            autoCapitalize="on"
-            autoCorrect="on"
-            autoComplete="current-password"
-            onChange={handleOnChange}
-            value={formdata.password}
-            type="password"
-            id="password"
-            name="password"
-            required
-            placeholder="Enter password"
-            className="pl-3 w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="relative">
+            <input
+              autoComplete="current-password"
+              onChange={handleOnChange}
+              value={formdata.password}
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              required
+              placeholder="Enter password"
+              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+            />
+            <span
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-gray-600"
+            >
+              {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
+            </span>
+          </div>
         </div>
 
-        {/* Submit */}
         <div className="text-center">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-8 py-2 font-semibold rounded-md hover:bg-blue-700 transition shadow-lg cursor-pointer"
+            className="bg-blue-600 text-white px-8 py-2 font-semibold cursor-pointer rounded-md hover:bg-blue-700 transition w-full"
           >
             Login
           </button>

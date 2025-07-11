@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 function EditHome() {
+  const navigate = useNavigate();
   const [homeData, setHomeData] = useState({
     title: "",
     price: "",
@@ -58,7 +61,7 @@ function EditHome() {
     }
 
     // Append files
-    if (image) {
+    if (image && image.length > 0) {
       for (let i = 0; i < image.length; i++) {
         formData.append("image", image[i]);
       }
@@ -76,10 +79,12 @@ function EditHome() {
       });
 
       console.log("Upload success", response.data.home);
-      alert("Home updated  successfully!");
+      navigate("/host/home");
     } catch (err) {
       console.error("Upload failed", err);
-      alert("Upload failed. Check console.");
+    }
+    for (const pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
     }
   };
   return (

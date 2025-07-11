@@ -6,8 +6,7 @@ const Home = require("../model/home");
 const User = require("../model/user");
 
 exports.postAddFavourites = async (req, res) => {
-  const homeId = await Home.findById(req.params.id);
-  console.log("Adding to favourites:", homeId);
+  const homeId = req.params.id;
   const userId = req.session.user?._id;
 
   try {
@@ -30,7 +29,7 @@ exports.postAddFavourites = async (req, res) => {
       req.session.user = user; // Update session with latest favourites
     }
 
-    res.redirect("/favourites");
+    res.status(201).json({ message: "Home added to favourites" });
   } catch (err) {
     console.error("Error adding to favourites:", err);
     res.status(500).send("Error adding to favourites");
@@ -52,12 +51,7 @@ exports.getFavouriteHome = async (req, res) => {
       "favourites"
     );
 
-    res.render("user-views/favourites.ejs", {
-      pageTitle: "Your Favourites",
-      favourites: user.favourites,
-      isLoggedIn: req.session.isLoggedIn,
-      user: req.session.user,
-    });
+    res.status(201).json({ message: "success", favourites: user.favourites });
   } catch (err) {
     console.error("Error fetching favourites:", err);
     res.status(500).send("Error fetching favourites");

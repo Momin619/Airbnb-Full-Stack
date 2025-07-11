@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../../api/api";
-
+import { useNavigate } from "react-router-dom";
 function AddHome() {
   const [homeData, setHomeData] = useState({
     title: "",
@@ -10,7 +10,7 @@ function AddHome() {
   });
   const [image, setImage] = useState(null); // single or multiple
   const [rulesPdf, setRulesPdf] = useState(null);
-
+  const navigate = useNavigate();
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setHomeData((prev) => ({
@@ -57,7 +57,7 @@ function AddHome() {
       });
 
       console.log("Upload success", response.data);
-      alert("Home added successfully!");
+      navigate("/host/home");
     } catch (err) {
       console.error("Upload failed", err);
       alert("Upload failed. Check console.");
@@ -65,7 +65,7 @@ function AddHome() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg mt-10 p-6 w-full">
+    <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg mt-10 p-6 w-full px-4 sm:px-6">
       <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">
         Add a New Home
       </h2>
@@ -75,41 +75,25 @@ function AddHome() {
         className="space-y-6"
         encType="multipart/form-data"
       >
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            value={homeData.title}
-            onChange={handleOnChange}
-            required
-            className="mt-1 block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="price"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Price
-          </label>
-          <input
-            type="number"
-            name="price"
-            id="price"
-            value={homeData.price}
-            onChange={handleOnChange}
-            required
-            className="mt-1 block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        {["title", "price", "location"].map((field) => (
+          <div key={field}>
+            <label
+              htmlFor={field}
+              className="block text-sm font-medium text-gray-700"
+            >
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+            </label>
+            <input
+              type={field === "price" ? "number" : "text"}
+              name={field}
+              id={field}
+              value={homeData[field]}
+              onChange={handleOnChange}
+              required
+              className="mt-1 block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        ))}
 
         <div>
           <label
@@ -123,24 +107,6 @@ function AddHome() {
             name="description"
             rows="4"
             value={homeData.description}
-            onChange={handleOnChange}
-            required
-            className="mt-1 block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          ></textarea>
-        </div>
-
-        <div>
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Location
-          </label>
-          <input
-            type="text"
-            id="location"
-            name="location"
-            value={homeData.location}
             onChange={handleOnChange}
             required
             className="mt-1 block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -186,7 +152,7 @@ function AddHome() {
         <div className="text-center">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-2 cursor-pointer rounded-md hover:bg-blue-700 transition"
+            className="bg-blue-600 cursor-pointer text-white px-6 py-2 rounded-md hover:bg-blue-700 transition w-full sm:w-auto"
           >
             Add Home
           </button>

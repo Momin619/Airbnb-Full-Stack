@@ -23,8 +23,6 @@ const hostHomeRouter = require("./routes/host-routes/hostHomeRouter");
 
 const addHomeRouter = require("./routes/host-routes/addHomeRouter");
 
-const { errorRouter } = require("./routes/error-route/errorRouter");
-
 const editHomeRouter = require("./routes/host-routes/editHomeRouter");
 
 const homeDetailsRouter = require("./routes/user-routes/homeDetailsRouter");
@@ -59,7 +57,16 @@ const store = new mongodb_session({
 
 app.use(express.static("public"));
 app.use("/uploads", express.static(path.join(rootPath, "uploads")));
-app.use("/rules", express.static(path.join(rootPath, "rules")));
+app.use(
+  "/rules",
+  express.static(path.join(__dirname, "rules"), {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".pdf")) {
+        res.setHeader("Content-Type", "application/pdf");
+      }
+    },
+  })
+);
 
 app.use(
   session({
@@ -128,8 +135,9 @@ console.log("Attaching homeDetailsRouter");
 
 app.use(homeDetailsRouter);
 console.log("Attaching errorRouter");
-
-app.use(errorRouter);
+app.use((req, res) => {
+  res.status(404).json({ message: "Page not found" });
+});
 
 mongoose
   .connect(mongo_url)

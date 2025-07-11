@@ -11,6 +11,8 @@ import GetHomes from "./components/host-components/GetHomes";
 import Loading from "./components/loading-component/Loading";
 import Error from "./components/Error";
 import Home from "./components/user-components/Home";
+import FavouriteHomes from "./components/user-components/FavouriteHomes";
+import HomeDetails from "./components/user-components/HomeDetails";
 import "../public/output.css";
 // import './'
 
@@ -57,6 +59,8 @@ function App() {
           <Route path="/host/edit-home/home/:id" element={<EditHome />} />
           <Route path="*" element={<Error />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/favourites" element={<FavouriteHomes />} />
+          <Route path="/home-details/home/:id" element={<HomeDetails />} />
         </Routes>
       </main>
     </div>

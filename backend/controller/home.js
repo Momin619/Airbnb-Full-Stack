@@ -122,12 +122,22 @@ const fs = require("fs");
 // const path = require("path");
 // const Home = require("../models/home");
 
+// const path = require("path");
+
+// const Home = require("../models/home");
+
 exports.postEditHome = async (req, res, next) => {
   console.log("req.body:", req.body);
   console.log("req.files:", req.files);
 
   try {
     const homeId = req.params.id;
+
+    const home = await Home.findById(homeId);
+    if (!home) {
+      console.log("Home not found");
+      return res.status(404).json({ message: "Home not found" });
+    }
 
     const update = {
       title: req.body.title,
@@ -136,41 +146,40 @@ exports.postEditHome = async (req, res, next) => {
       location: req.body.location,
     };
 
-    const home = await Home.findById(homeId);
-    if (!home) {
-      console.log("Home not found");
-      return res.redirect("/host/home");
-    }
-
-    // Handle new image upload
-    if (req.files?.image?.[0]) {
+    // ✅ Handle image update
+    if (req.files?.image && req.files.image.length > 0) {
       if (home.image) {
         const oldImagePath = path.join(__dirname, "..", home.image);
         fs.unlink(oldImagePath, (err) => {
           if (err) console.log("Failed to delete old image:", err.message);
         });
       }
-
       update.image = "/" + req.files.image[0].path.replace(/\\/g, "/");
     }
 
-    // Handle new rules PDF upload
-    if (req.files?.rulesPdf?.[0]) {
+    // ✅ Handle rulesPdf update
+    if (req.files?.rulesPdf && req.files.rulesPdf.length > 0) {
       if (home.rulesPdf) {
         const oldPdfPath = path.join(__dirname, "..", home.rulesPdf);
         fs.unlink(oldPdfPath, (err) => {
           if (err) console.log("Failed to delete old PDF:", err.message);
         });
       }
-
       update.rulesPdf = "/" + req.files.rulesPdf[0].path.replace(/\\/g, "/");
     }
 
-    await Home.findByIdAndUpdate(homeId, update);
-    res.status(201).json({ message: "Home updated successfully" });
+    // ✅ Save the update
+    const updatedHome = await Home.findByIdAndUpdate(homeId, update, {
+      new: true, // return updated doc
+    });
+
+    res.status(201).json({
+      message: "Home updated successfully",
+      home: updatedHome,
+    });
   } catch (err) {
-    console.log("Error in postEditHome:", err);
-    res.redirect("/host/home");
+    console.error("Error in postEditHome:", err);
+    res.status(500).json({ message: "Error updating home" });
   }
 };
 
@@ -222,12 +231,7 @@ exports.getHomeDetails = async (req, res, next) => {
         user: req.session.user,
       });
     }
-    res.render(path.join(rootPath, "views", "user-views", "home-details.ejs"), {
-      pageTitle: "Home Details",
-      home: home,
-      isLoggedIn: req.session.isLoggedIn,
-      user: req.session.user,
-    });
+    res.status(201).json({ home });
   } catch (error) {
     console.log(error);
   }
