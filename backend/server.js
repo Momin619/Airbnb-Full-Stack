@@ -10,11 +10,11 @@ const cors = require("cors");
 
 app.use(
   cors({
-    // origin: true,
-    origin: "http://localhost:5173",
     credentials: true,
+    origin: "http://localhost:5173",
   })
 );
+
 app.use(express.json());
 const rootPath = require("./utils/path-utils");
 const homeRouter = require("./routes/user-routes/homeRouter");
@@ -76,6 +76,7 @@ app.use(
     store,
   })
 );
+
 app.use(express.urlencoded({ extended: false }));
 
 app.set("view engine", "ejs");
