@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../store/UserStore";
 
 import api from "../api/api";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { user, isLoggedIn, setUser, setIsLoggedIn } = useUser();
   // console.log("user is", user);
   const userType = user?.userType || "";

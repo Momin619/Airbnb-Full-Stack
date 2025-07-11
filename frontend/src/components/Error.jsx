@@ -1,13 +1,16 @@
-import React from "react";
+// src/components/Error.jsx
+import { Link } from "react-router-dom";
 
-function Error() {
+const Error = () => {
   return (
-    <div>
-      <h1 className="text-4xl font-bold text-center text-red-500">
-        404 page not found
-      </h1>
+    <div className="text-center py-20 px-6">
+      <h1 className="text-5xl font-bold mb-4 text-red-600">404</h1>
+      <p className="text-xl mb-6">Page Not Found</p>
+      <Link to="/login" className="text-blue-500 hover:underline">
+        Go back to login
+      </Link>
     </div>
   );
-}
+};
 
 export default Error;

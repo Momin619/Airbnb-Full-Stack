@@ -9,6 +9,8 @@ import AddHome from "./components/host-components/AddHome";
 import EditHome from "./components/host-components/EditHome";
 import GetHomes from "./components/host-components/GetHomes";
 import Loading from "./components/loading-component/Loading";
+import Error from "./components/Error";
+import Home from "./components/user-components/Home";
 import "../public/output.css";
 // import './'
 
@@ -53,6 +55,8 @@ function App() {
           <Route path="/host/add-home" element={<AddHome />} />
           <Route path="/host/home" element={<GetHomes />} />
           <Route path="/host/edit-home/home/:id" element={<EditHome />} />
+          <Route path="*" element={<Error />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </main>
     </div>

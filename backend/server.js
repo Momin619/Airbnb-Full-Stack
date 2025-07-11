@@ -6,19 +6,18 @@ const mongoose = require("mongoose");
 
 const path = require("path");
 
-// local modulesnp[]
-
 const cors = require("cors");
 
 app.use(
   cors({
+    // origin: true,
     origin: "http://localhost:5173",
     credentials: true,
   })
 );
 app.use(express.json());
 const rootPath = require("./utils/path-utils");
-const homeRouter = require("./routes/user-routes/homeRouer");
+const homeRouter = require("./routes/user-routes/homeRouter");
 
 const hostHomeRouter = require("./routes/host-routes/hostHomeRouter");
 
@@ -101,24 +100,34 @@ app.use((req, res, next) => {
   console.log("Login session:", loginSession);
   next();
 });
+console.log("Attaching authRouter");
 
 app.use(authRouter);
+console.log("Attaching hostHomeRouter");
 
 app.use("/host", hostHomeRouter);
+console.log("Attaching addHomeRouter");
 
 app.use("/host", addHomeRouter);
+console.log("Attaching edithomerouter");
 
 app.use("/host", editHomeRouter);
+console.log("Attaching favouritehomeRouter");
 
 app.use(favouriteHomeRouter);
+console.log("Attaching deleteRouter");
 
 app.use("/host", deleteHomeRouter);
+console.log("Attaching bookingRouter");
 
 app.use(bookingRouter);
+console.log("Attaching homeRouter");
 
 app.use(homeRouter);
+console.log("Attaching homeDetailsRouter");
 
 app.use(homeDetailsRouter);
+console.log("Attaching errorRouter");
 
 app.use(errorRouter);
 
