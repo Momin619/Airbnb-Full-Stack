@@ -33,10 +33,12 @@ exports.postLogin = async (req, res, next) => {
     req.session.isLoggedIn = true;
     req.session.user = user;
 
+    console.log("user id is", req.session.user._id);
     return res.status(200).json({
       message: "Login successful",
       redirectTo: user.userType === "guest" ? "/home" : "/host/home",
       user: {
+        _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
@@ -98,11 +100,11 @@ exports.postSignup = [
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters")
     .matches(/[a-z]/)
-    .withMessage("Include lowercase")
+    .withMessage("Password must include lowercase")
     .matches(/[A-Z]/)
-    .withMessage("Include uppercase")
+    .withMessage("Password must include uppercase")
     .matches(/[0-9]/)
-    .withMessage("Include number"),
+    .withMessage("Password must include number"),
 
   check("confirmPassword").custom((value, { req }) => {
     if (value !== req.body.password) {

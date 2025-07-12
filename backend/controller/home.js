@@ -21,8 +21,10 @@ exports.getBooking = async (req, res, next) => {
 };
 
 exports.getHostHome = async (req, res, next) => {
+  console.log(req.session.user);
+  const userId = req.session.user._id;
   try {
-    const homes = await Home.find();
+    const homes = await Home.find({ owner: userId });
     console.log(homes);
     if (homes) {
       res.status(200).json({ homes });
@@ -35,12 +37,8 @@ exports.getHostHome = async (req, res, next) => {
 exports.getHome = async (req, res, next) => {
   try {
     const homes = await Home.find();
-    res.render(path.join(rootPath, "views", "user-views", "home.ejs"), {
-      pageTitle: "Home ",
-      homes: homes,
-      isLoggedIn: req.session.isLoggedIn,
-      user: req.session.user,
-    });
+    console.log(`homes  :${homes}`);
+    res.status(200).json({ homes });
   } catch (error) {
     console.log(error);
   }
@@ -55,6 +53,13 @@ exports.getAddHome = (req, res, next) => {
 };
 
 exports.postAddHome = async (req, res, next) => {
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not logged in" });
+  }
+  const userId = req.session.user._id;
+  console.log("userId ", userId);
   try {
     const { title, price, description, location } = req.body;
     console.log(req.body);
@@ -86,6 +91,7 @@ exports.postAddHome = async (req, res, next) => {
       location,
       image: imagePath,
       rulesPdf: rulesPath,
+      owner: userId,
     });
 
     await home.save();
@@ -99,6 +105,7 @@ exports.postAddHome = async (req, res, next) => {
         location,
         image: imagePath,
         rulesPdf: rulesPath,
+        owner: userId,
       },
     });
   } catch (error) {
@@ -183,10 +190,6 @@ exports.postEditHome = async (req, res, next) => {
   }
 };
 
-// const path = require("path");
-// const Home = require("../models/home");
-// const User = require("../models/user");
-
 exports.postDeleteHome = async (req, res, next) => {
   const homeId = req.params.id;
 
@@ -196,22 +199,35 @@ exports.postDeleteHome = async (req, res, next) => {
       return res.redirect("/host/home");
     }
 
-    // Delete image file from uploads folder
-    const imagePath = path.join(__dirname, "..", home.image); // example: /uploads/image.jpg
-    fs.unlink(imagePath, (err) => {
-      if (err) {
-        console.log("Image deletion failed:", err.message);
+    // ✅ Delete home image if exists
+    if (home.image) {
+      const imagePath = path.join(__dirname, "..", home.image);
+      if (fs.existsSync(imagePath)) {
+        fs.unlink(imagePath, (err) => {
+          if (err) console.log("Image deletion failed:", err.message);
+        });
       }
-    });
+    }
 
-    // Delete home from DB
+    // ✅ Delete rulesPdf if exists
+    if (home.rulesPdf) {
+      const pdfPath = path.join(__dirname, "..", home.rulesPdf);
+      if (fs.existsSync(pdfPath)) {
+        fs.unlink(pdfPath, (err) => {
+          if (err) console.log("PDF deletion failed:", err.message);
+        });
+      }
+    }
+
+    // ✅ Delete home from DB
     await Home.findByIdAndDelete(homeId);
 
-    // Remove home from all users' favourites array
+    // ✅ Remove home from all users' favourites array
     await User.updateMany(
       { favourites: homeId },
       { $pull: { favourites: homeId } }
     );
+
     res.status(201).json({ message: "Home deleted successfully" });
   } catch (err) {
     console.log("Error deleting home:", err);

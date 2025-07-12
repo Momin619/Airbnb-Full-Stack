@@ -1,6 +1,8 @@
+const serverBootTime = Date.now();
 const express = require("express");
 
 const app = express();
+// Place at the top of app.js
 
 const mongoose = require("mongoose");
 
@@ -77,6 +79,19 @@ app.use(
   })
 );
 
+// ✅ Force session login state to false on first request (per session)
+app.use((req, res, next) => {
+  if (
+    !req.session.bootTime || // first time ever
+    req.session.bootTime < serverBootTime // server restarted after session created
+  ) {
+    req.session.isLoggedIn = false;
+    req.session.user = null;
+    req.session.bootTime = serverBootTime;
+  }
+  next();
+});
+
 app.use(express.urlencoded({ extended: false }));
 
 app.set("view engine", "ejs");
@@ -100,42 +115,32 @@ app.get("/check-auth", (req, res) => {
   }
 });
 
-app.use((req, res, next) => {
-  const loginSession = req.session.isLoggedIn;
-  const userSession = req.session.user;
-  // ✅ Correct logging
-  console.log("User session:", userSession);
-  console.log("Login session:", loginSession);
-  next();
-});
-console.log("Attaching authRouter");
+// app.use((req, res, next) => {
+//   const loginSession = req.session.isLoggedIn;
+//   const userSession = req.session.user;
+//   // ✅ Correct logging
+//   console.log("User session:", userSession);
+//   console.log("Login session:", loginSession);
+//   next();
+// });
 
 app.use(authRouter);
-console.log("Attaching hostHomeRouter");
-
 app.use("/host", hostHomeRouter);
-console.log("Attaching addHomeRouter");
 
 app.use("/host", addHomeRouter);
-console.log("Attaching edithomerouter");
 
 app.use("/host", editHomeRouter);
-console.log("Attaching favouritehomeRouter");
 
 app.use(favouriteHomeRouter);
-console.log("Attaching deleteRouter");
 
 app.use("/host", deleteHomeRouter);
-console.log("Attaching bookingRouter");
 
 app.use(bookingRouter);
-console.log("Attaching homeRouter");
 
 app.use(homeRouter);
-console.log("Attaching homeDetailsRouter");
 
 app.use(homeDetailsRouter);
-console.log("Attaching errorRouter");
+
 app.use((req, res) => {
   res.status(404).json({ message: "Page not found" });
 });

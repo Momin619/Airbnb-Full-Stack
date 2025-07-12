@@ -10,6 +10,11 @@ const homeSchema = mongoose.Schema({
     type: String,
     required: false,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Ensure this matches your User model name
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Home", homeSchema);

@@ -51,7 +51,7 @@ function FavouriteHomes() {
             {favourites.map((home) => (
               <div
                 key={home._id}
-                className="w-full max-w-4xl rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300"
+                className="w-full max-w-4xl rounded-lg overflow-hidden bg-white shadow-md hover:shadow-xl transition duration-300"
               >
                 <img
                   src={`http://localhost:3500${home.image}`}
