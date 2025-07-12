@@ -7,7 +7,6 @@ function HomeDetails() {
   const { id } = useParams();
   const [home, setHome] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchHome = async () => {
       try {
