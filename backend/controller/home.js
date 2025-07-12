@@ -36,8 +36,7 @@ exports.getHostHome = async (req, res, next) => {
 
 exports.getHome = async (req, res, next) => {
   try {
-    const homes = await Home.find();
-    console.log(`homes  :${homes}`);
+    const homes = await Home.find().populate("owner");
     res.status(200).json({ homes });
   } catch (error) {
     console.log(error);
@@ -238,7 +237,7 @@ exports.postDeleteHome = async (req, res, next) => {
 exports.getHomeDetails = async (req, res, next) => {
   try {
     const homeId = req.params.id;
-    const home = await Home.findById(homeId);
+    const home = await Home.findById(homeId).populate("owner");
     console.log("pdf:", home.rulesPdf);
     if (!home) {
       return res.status(404).render(path.join(rootPath, "views", "error.ejs"), {

@@ -14,6 +14,7 @@ function Home() {
       try {
         const response = await api.get("/home");
         setHomes(response.data.homes);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching homes:", error);
@@ -50,13 +51,13 @@ function Home() {
             <HomeCard key={home._id} home={home}>
               <button
                 onClick={() => addToFavourite(home._id)}
-                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                className="w-full sm:w-auto cursor-pointer px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
               >
                 Add to Favourite
               </button>
               <button
                 onClick={() => fetchHomeDetails(home._id)}
-                className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                className="w-full sm:w-auto cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
                 Home Details
               </button>
