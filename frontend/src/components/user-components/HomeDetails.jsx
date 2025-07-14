@@ -3,7 +3,13 @@ import { useParams } from "react-router-dom";
 import api from "../../api/api";
 import Loading from "../loading-component/Loading";
 
+import { motion } from "framer-motion";
 function HomeDetails() {
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
   const { id } = useParams();
   const [home, setHome] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,55 +41,65 @@ function HomeDetails() {
   const capitalizedOwnerName = capitalizeName(ownerName);
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10 space-y-6">
-      {/* Image at the top */}
-      {home.image && (
+    <motion.div
+      className=""
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.4 }}
+    >
+      {" "}
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10 space-y-6">
+        {/* Image at the top */}
+        {home.image && (
+          <div>
+            <img
+              src={`http://localhost:3500${home.image}`}
+              alt={home.title}
+              className="w-full h-64 object-cover rounded-md"
+            />
+          </div>
+        )}
+
+        {/* Title and Host Info */}
         <div>
-          <img
-            src={`http://localhost:3500${home.image}`}
-            alt={home.title}
-            className="w-full h-64 object-cover rounded-md"
-          />
+          <h2 className="text-3xl font-bold text-blue-600">{home.title}</h2>
+          <p className="text-md text-gray-500 italic mt-1">
+            <b>Hosted by {capitalizedOwnerName}</b>
+          </p>
         </div>
-      )}
 
-      {/* Title and Host Info */}
-      <div>
-        <h2 className="text-3xl font-bold text-blue-600">{home.title}</h2>
-        <p className="text-md text-gray-500 italic mt-1">
-          <b>Hosted by {capitalizedOwnerName}</b>
-        </p>
-      </div>
+        {/* Home Details */}
+        <div className="space-y-2">
+          <p className="text-lg text-gray-800">
+            <strong>Price:</strong> ${home.price}
+          </p>
 
-      {/* Home Details */}
-      <div className="space-y-2">
-        <p className="text-lg text-gray-800">
-          <strong>Price:</strong> ${home.price}
-        </p>
+          <p className="text-gray-700">
+            <strong>Description:</strong> {home.description}
+          </p>
 
-        <p className="text-gray-700">
-          <strong>Description:</strong> {home.description}
-        </p>
-
-        <p className="text-gray-700">
-          <strong>Location:</strong> {home.location}
-        </p>
-      </div>
-
-      {/* PDF Rules */}
-      {home.rulesPdf && (
-        <div>
-          <p className="font-semibold mb-1">Rules PDF:</p>
-          <a
-            href={`http://localhost:3500${home.rulesPdf}`}
-            download
-            className="text-blue-600 underline"
-          >
-            Download Home Rules PDF
-          </a>
+          <p className="text-gray-700">
+            <strong>Location:</strong> {home.location}
+          </p>
         </div>
-      )}
-    </div>
+
+        {/* PDF Rules */}
+        {home.rulesPdf && (
+          <div>
+            <p className="font-semibold mb-1">Rules PDF:</p>
+            <a
+              href={`http://localhost:3500${home.rulesPdf}`}
+              download
+              className="text-blue-600 underline"
+            >
+              Download Home Rules PDF
+            </a>
+          </div>
+        )}
+      </div>
+    </motion.div>
   );
 }
 

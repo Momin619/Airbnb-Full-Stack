@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useUser } from "./store/UserStore";
 import api from "./api/api";
 import Navbar from "./components/Navbar";
@@ -13,13 +13,13 @@ import Error from "./components/Error";
 import Home from "./components/user-components/Home";
 import FavouriteHomes from "./components/user-components/FavouriteHomes";
 import HomeDetails from "./components/user-components/HomeDetails";
+import { AnimatePresence } from "framer-motion";
 import "../public/output.css";
-// import './'
 
 function App() {
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true); // 🔧
+  const [loading, setLoading] = useState(true);
   const { setUser, setIsLoggedIn } = useUser();
+  const location = useLocation(); // 👈 get current location
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -37,31 +37,33 @@ function App() {
         setIsLoggedIn(false);
         setUser(null);
       } finally {
-        setLoading(false); // ✅ Set loading to false when done
+        setLoading(false);
       }
     };
 
     checkAuth();
   }, []);
 
-  if (loading) return <Loading />; // ✅ Don't render too early
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 to-blue-300">
       <Navbar />
       <main className="flex-grow flex justify-center items-start py-12 px-4">
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/host/add-home" element={<AddHome />} />
-          <Route path="/host/home" element={<GetHomes />} />
-          <Route path="/host/edit-home/home/:id" element={<EditHome />} />
-          <Route path="*" element={<Error />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/favourites" element={<FavouriteHomes />} />
-          <Route path="/home-details/home/:id" element={<HomeDetails />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/host/add-home" element={<AddHome />} />
+            <Route path="/host/home" element={<GetHomes />} />
+            <Route path="/host/edit-home/home/:id" element={<EditHome />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/favourites" element={<FavouriteHomes />} />
+            <Route path="/home-details/home/:id" element={<HomeDetails />} />
+            <Route path="*" element={<Error />} />
+          </Routes>
+        </AnimatePresence>
       </main>
     </div>
   );

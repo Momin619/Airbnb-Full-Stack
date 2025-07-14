@@ -2,8 +2,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import ValidationErrors from "../validation-component/ValidationErrors";
-
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import { motion } from "framer-motion";
+
+// Animation variants
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+};
+
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -44,7 +52,14 @@ function Signup() {
   };
 
   return (
-    <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6 my-10 mx-auto">
+    <motion.div
+      className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6 my-10 mx-auto"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.4 }}
+    >
       <div className="text-center">
         <img
           src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
@@ -115,8 +130,6 @@ function Signup() {
           />
         </div>
 
-        {/* Password Field */}
-        {/* Password Field */}
         <div className="mb-4">
           <label
             htmlFor="password"
@@ -145,7 +158,6 @@ function Signup() {
           </div>
         </div>
 
-        {/* Confirm Password Field */}
         <div className="mb-4">
           <label
             htmlFor="confirmPassword"
@@ -224,7 +236,7 @@ function Signup() {
           </button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 }
 

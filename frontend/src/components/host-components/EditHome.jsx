@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 function EditHome() {
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
   const navigate = useNavigate();
   const [homeData, setHomeData] = useState({
     title: "",
@@ -88,8 +93,15 @@ function EditHome() {
     }
   };
   return (
-    <>
-      <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg mt-10 p-6 w-full">
+    <motion.div
+      className="max-w-2xl mx-auto bg-white shadow-md rounded-lg mt-10 p-6 w-full"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.4 }}
+    >
+      <div className="">
         <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">
           Edit Home
         </h2>
@@ -217,7 +229,7 @@ function EditHome() {
           </div>
         </form>
       </div>
-    </>
+    </motion.div>
   );
 }
 
